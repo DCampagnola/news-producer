@@ -8,11 +8,7 @@ RUN set -x \
    && apt update \
    && apt upgrade -y \
    && apt install -y \
-       firefox-esr \
-   && pip install  \
-       requests \
-       selenium \
- 
+       firefox-esr
 # Add latest FireFox
 RUN set -x \
    && apt install -y \
