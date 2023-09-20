@@ -83,7 +83,7 @@ def send_message(chat_id, text: str, markdown=False):
     return response.json()
 
 def send_test_article(chat_id):
-    send_article(chat_id, bot_test.test_article, bot_test.urls)
+    return send_article(chat_id, bot_test.test_article, bot_test.urls)
 
 def send_article(chat_id, article: ProducedNewsArticle, urls: list[str] ):
     def get_paragraph_text(paragraph: ProducedNewsArticle.ProducedParagraph):
@@ -107,12 +107,13 @@ def send_article(chat_id, article: ProducedNewsArticle, urls: list[str] ):
         ])
         return f"*Paragraph*:\n{util_markdown.escape(paragraph.text)}\n\n*Sources*:\n{sources_text}"
     
-    sources_text = '\n\n'.join([
+    sources_texts = [
         get_sources_text(paragraph)
         for paragraph in article.content
-    ])
+    ]
     send_message(chat_id, "Explaining the sources...")
-    send_message(chat_id, sources_text, markdown=True)
+    for sources_text in sources_texts:
+        send_message(chat_id, sources_text, markdown=True)
 
 if __name__ == '__main__':
     print(get_me())
