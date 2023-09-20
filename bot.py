@@ -25,8 +25,8 @@ def get_updates(last_update_id=None, timeout=30):
 
 def loop_updates():
     last_update_id = None
-    pool_time = os.getenv('POOL_TIME', 1)
-    timeout = os.getenv('TIMEOUT', 0)
+    pool_time = int(os.getenv('POOL_TIME', "1"))
+    timeout = int(os.getenv('TIMEOUT', "0"))
     while True:
         updates = get_updates(
             last_update_id=None if last_update_id is None else last_update_id + 1,
