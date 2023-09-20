@@ -9,6 +9,8 @@ from urllib.parse import quote as urlencode
 
 from main import ProducedNewsArticle, produce_article
 
+TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
+
 def log(message):
     print(message)
 
@@ -100,6 +102,5 @@ def send_article(chat_id, article: ProducedNewsArticle, urls: list[str] ):
 
 if __name__ == '__main__':
     print(get_me())
-    TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
     assert TELEGRAM_TOKEN is not None
     loop_updates()
