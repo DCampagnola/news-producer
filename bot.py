@@ -100,6 +100,20 @@ def send_article(chat_id, article: ProducedNewsArticle, urls: list[str] ):
     send_message(chat_id, "Sending article...")
     send_message(chat_id, text_message, markdown=True)
 
+    def get_sources_text(paragraph: ProducedNewsArticle.ProducedParagraph):
+        sources_text = '\n'.join([
+            f"[Source {source.article_index + 1}]({util_markdown.escape(urls[source.article_index])}):\n*Reason*:{util_markdown.escape(source.reason)}\n*Source*:{util_markdown.escape(' --- '.join(source.article_texts))}\n"
+            for source in paragraph.sources
+        ])
+        return f"*Paragraph*:\n{util_markdown.escape(paragraph.text)}\n\n*Sources*:\n{sources_text}"
+    
+    sources_text = '\n\n'.join([
+        get_sources_text(paragraph)
+        for paragraph in article.content
+    ])
+    send_article(chat_id, "Explaining the sources...")
+    send_message(chat_id, sources_text, markdown=True)
+
 if __name__ == '__main__':
     print(get_me())
     assert TELEGRAM_TOKEN is not None
