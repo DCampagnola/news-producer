@@ -87,7 +87,7 @@ class NewsArticle(BaseModel):
 @functools.lru_cache
 def extract_news_article(
         url: str,
-        driver: webdriver.Firefox = webdriver.Firefox(),
+        driver: webdriver.Firefox,
 ):
     driver.get(url)
     title = driver.title
