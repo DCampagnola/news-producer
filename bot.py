@@ -111,7 +111,7 @@ def send_article(chat_id, article: ProducedNewsArticle, urls: list[str] ):
         get_sources_text(paragraph)
         for paragraph in article.content
     ])
-    send_article(chat_id, "Explaining the sources...")
+    send_message(chat_id, "Explaining the sources...")
     send_message(chat_id, sources_text, markdown=True)
 
 if __name__ == '__main__':
