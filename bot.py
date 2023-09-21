@@ -38,7 +38,9 @@ def loop_updates():
             log(f"Last update id {last_update_id}")
         skip = False
         for update in updates['result']:
-            if 'message' in update and message['text'] == '/skip':
+            if 'message' in update and update['message']['text'] == '/skip':
+                chat_id = update['message']['chat']['id']
+                send_message(chat_id, "Skipped")
                 skip = True
         if skip:
             continue
