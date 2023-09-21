@@ -36,6 +36,13 @@ def loop_updates():
         if len(updates['result']) > 0:
             last_update_id = int(updates['result'][-1]['update_id'])
             log(f"Last update id {last_update_id}")
+        skip = False
+        for update in updates['result']:
+            if 'message' in update and message['text'] == '/skip':
+                skip = True
+        if skip:
+            continue
+        
         for update in updates['result']:
             process_update(update)
         print("Sleeping...")
