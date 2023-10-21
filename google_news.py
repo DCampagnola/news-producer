@@ -59,6 +59,7 @@ def get_news(driver: webdriver.Firefox, limit: int = None) -> list[GoogleNewsCov
                 driver.close()
                 driver.switch_to.window(driver.window_handles[0])
                 continue
+            
 
             news_url = driver.current_url
             if news_url.startswith("https://www.google.com/url?q="):
