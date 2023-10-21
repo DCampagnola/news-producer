@@ -74,12 +74,15 @@ def process_text_message(message):
         return send_message(chat_id, f'Bye {name}')
     elif text == '/test_article':
         return send_test_article(chat_id)
-    elif text.startswith('/get_coverage '):
+    elif text.startswith('/get_coverage'):
+        last_sent_coverage = None
         # limit is optional
         limit = int(text[len('/get_coverage '):]) if len(text) > len('/get_coverage ') else 3
         last_sent_coverage = send_coverage(chat_id, limit=limit)
         return
-    elif last_sent_coverage is not None and text.startswith('/produce'):
+    elif text.startswith('/produce'):
+        if last_sent_coverage is None:
+            return send_message(chat_id, f'Please send me a coverage first.')
         number = int(text[len('/produce'):])
         if number < 1 or number > len(last_sent_coverage):
             return send_message(chat_id, f'Invalid number {number}, please send me a valid number.')
