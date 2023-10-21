@@ -112,9 +112,9 @@ def send_generate_post(chat_id, urls: list[str]):
     send_message(chat_id, f'Please check the post and make sure it is correct. If it is not, please send me the correct urls and I will try again.')
     send_article(chat_id, article, urls)
 
-def send_coverage(chat_id, lim):
+def send_coverage(chat_id, limit=3):
     send_message(chat_id, "Getting coverage...")
-    news_coverages = extract_news_article(limit=3)
+    news_coverages = extract_news_article(limit)
     send_message(chat_id, f"Got {len(news_coverages)} coverages")
     msg = 'I have found the following coverages:\n'
     for i, news_coverage in enumerate(news_coverages):
