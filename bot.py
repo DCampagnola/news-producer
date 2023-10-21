@@ -56,9 +56,10 @@ def process_update(update):
         log(update['message'])
         process_text_message(update['message'])
 
-last_sent_coverag: list[GoogleNewsCoverage] = None
+last_sent_coverage: list[GoogleNewsCoverage] = None
 
 def process_text_message(message):
+    global last_sent_coverage
     chat_id = message['chat']['id']
     text: str = message['text']
     from_user = message['from']
@@ -87,6 +88,14 @@ def process_text_message(message):
     urls: list[str] = text.split('\n')
     return send_generate_post(chat_id, urls)
 
+def send_produce_post(chat_id, number: int):
+    global last_sent_coverage
+    if number < 1 or number > len(last_sent_coverage):
+        return send_message(chat_id, f'Invalid number {number}, please send me a valid number.')
+    coverage: GoogleNewsCoverage = last_sent_coverage[number - 1]
+    send_message(chat_id, f'Got coverage {number}, generating post...')
+    send_generate_post(chat_id, [article.url for article in coverage.articles])
+
 def send_generate_post(chat_id, urls: list[str]):
     for url in urls:
         if url.startswith('http'):
@@ -103,7 +112,7 @@ def send_generate_post(chat_id, urls: list[str]):
     send_message(chat_id, f'Please check the post and make sure it is correct. If it is not, please send me the correct urls and I will try again.')
     send_article(chat_id, article, urls)
 
-def send_coverage(chat_id):
+def send_coverage(chat_id, lim):
     send_message(chat_id, "Getting coverage...")
     news_coverages = extract_news_article(limit=3)
     send_message(chat_id, f"Got {len(news_coverages)} coverages")
