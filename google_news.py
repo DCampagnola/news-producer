@@ -23,9 +23,14 @@ def extract_news_article(limit: int = None) -> NewsArticle:
     driver = webdriver.Firefox(
         options=options,
     )
-    news = get_news(driver, limit=limit)
-    driver.quit()
-    return news
+    try:
+        news = get_news(driver, limit=limit)
+        return news
+    except Exception as e:
+        print(f'Error: {e}')
+        raise e
+    finally:
+        driver.quit()
 
 def get_news(driver: webdriver.Firefox, limit: int = None) -> list[GoogleNewsCoverage]:
     driver.get(google_news_world_topic_url)
@@ -59,7 +64,7 @@ def get_news(driver: webdriver.Firefox, limit: int = None) -> list[GoogleNewsCov
                 driver.close()
                 driver.switch_to.window(driver.window_handles[0])
                 continue
-            
+
 
             news_url = driver.current_url
             if news_url.startswith("https://www.google.com/url?q="):
