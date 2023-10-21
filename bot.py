@@ -116,7 +116,11 @@ def send_generate_post(chat_id, urls: list[str]):
 
 def send_coverage(chat_id, limit=3):
     send_message(chat_id, "Getting coverage...")
-    news_coverages = extract_news_article(limit)
+    try:
+        news_coverages = extract_news_article(limit)
+    except Exception as e:
+        send_message(chat_id, f'Error: {e}')
+        return
     send_message(chat_id, f"Got {len(news_coverages)} coverages")
     msg = 'I have found the following coverages:\n'
     for i, news_coverage in enumerate(news_coverages):
