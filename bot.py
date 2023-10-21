@@ -8,6 +8,7 @@ import os
 from urllib.parse import quote as urlencode
 
 from main import ProducedNewsArticle, produce_article
+from google_news import get_news, GoogleNewsCoverage
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 
@@ -55,9 +56,11 @@ def process_update(update):
         log(update['message'])
         process_text_message(update['message'])
 
+last_sent_coverag: list[GoogleNewsCoverage] = None
+
 def process_text_message(message):
     chat_id = message['chat']['id']
-    text = message['text']
+    text: str = message['text']
     from_user = message['from']
     name = from_user['first_name']
     log(f"Got message from {from_user['username']}: {text}")
@@ -70,7 +73,21 @@ def process_text_message(message):
         return send_message(chat_id, f'Bye {name}')
     elif text == '/test_article':
         return send_test_article(chat_id)
+    elif text == '/get_coverage':
+        last_sent_coverage = send_coverage(chat_id)
+        return
+    elif last_sent_coverage is not None and text.startswith('/produce'):
+        number = int(text[len('/produce'):])
+        if number < 1 or number > len(last_sent_coverage):
+            return send_message(chat_id, f'Invalid number {number}, please send me a valid number.')
+        coverage: GoogleNewsCoverage = last_sent_coverage[number - 1]
+        send_message(chat_id, f'Got coverage {number}, generating post...')
+        send_generate_post(chat_id, [article.url for article in coverage.articles])
+        return
     urls: list[str] = text.split('\n')
+    return send_generate_post(chat_id, urls)
+
+def send_generate_post(chat_id, urls: list[str]):
     for url in urls:
         if url.startswith('http'):
             log(f"Got url {url}")
@@ -86,6 +103,20 @@ def process_text_message(message):
     send_message(chat_id, f'Please check the post and make sure it is correct. If it is not, please send me the correct urls and I will try again.')
     send_article(chat_id, article, urls)
 
+def send_coverage(chat_id):
+    send_message(chat_id, "Getting coverage...")
+    news_coverages = get_news()
+    send_message(chat_id, f"Got {len(news_coverages)} coverages")
+    msg = 'I have found the following coverages:\n'
+    for i, news_coverage in enumerate(news_coverages):
+        msg += f"[{i + 1}] {len(news_coverage.articles)} articles\n"
+        msg += '\n'.join([
+            f"[{j + 1}] {util_markdown.escape(article.title)}" for j, article in enumerate(news_coverage.articles)
+        ])
+        msg += '\n'
+    send_message(chat_id, msg)
+    send_message(chat_id, "Please send me the number of the coverage you want to use.")
+    return news_coverages
 
 def send_message(chat_id, text: str, markdown=False):
     response = requests.get(f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage',params={'chat_id': chat_id, 'text': text, 'parse_mode': 'MarkdownV2' if markdown else None})
