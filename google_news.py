@@ -15,6 +15,16 @@ class GoogleNewsCoverage(NamedTuple):
 
 google_news_world_topic_url = "https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US%3Aen"
 
+def extract_news_article(limit: int = None) -> NewsArticle:
+    options = Options()
+    options.headless = True
+    options.add_argument('--hide-scrollbars')
+    options.add_argument('--disable-gpu')
+    driver = webdriver.Firefox(
+        options=options,
+    )
+    news = get_news(driver, limit=limit)
+
 def get_news(driver: webdriver.Firefox, limit: int = None) -> list[GoogleNewsCoverage]:
     driver.get(google_news_world_topic_url)
     cookie_button = driver.find_element(By.XPATH, "//form[2]/div/div/button/span")

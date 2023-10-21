@@ -8,7 +8,7 @@ import os
 from urllib.parse import quote as urlencode
 
 from main import ProducedNewsArticle, produce_article
-from google_news import get_news, GoogleNewsCoverage
+from google_news import extract_news_article, GoogleNewsCoverage
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 
@@ -105,7 +105,7 @@ def send_generate_post(chat_id, urls: list[str]):
 
 def send_coverage(chat_id):
     send_message(chat_id, "Getting coverage...")
-    news_coverages = get_news()
+    news_coverages = extract_news_article(limit=3)
     send_message(chat_id, f"Got {len(news_coverages)} coverages")
     msg = 'I have found the following coverages:\n'
     for i, news_coverage in enumerate(news_coverages):
