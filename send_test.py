@@ -1,3 +1,3 @@
 import bot
 
-print(bot.send_test_article(135806583))
+print(bot.send_coverage(135806583))

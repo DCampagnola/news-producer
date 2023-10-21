@@ -24,6 +24,8 @@ def extract_news_article(limit: int = None) -> NewsArticle:
         options=options,
     )
     news = get_news(driver, limit=limit)
+    driver.quit()
+    return news
 
 def get_news(driver: webdriver.Firefox, limit: int = None) -> list[GoogleNewsCoverage]:
     driver.get(google_news_world_topic_url)
