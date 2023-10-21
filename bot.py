@@ -74,8 +74,10 @@ def process_text_message(message):
         return send_message(chat_id, f'Bye {name}')
     elif text == '/test_article':
         return send_test_article(chat_id)
-    elif text == '/get_coverage':
-        last_sent_coverage = send_coverage(chat_id)
+    elif text.startswith('/get_coverage '):
+        # limit is optional
+        limit = int(text[len('/get_coverage '):]) if len(text) > len('/get_coverage ') else 3
+        last_sent_coverage = send_coverage(chat_id, limit=limit)
         return
     elif last_sent_coverage is not None and text.startswith('/produce'):
         number = int(text[len('/produce'):])

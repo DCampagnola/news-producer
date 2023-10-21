@@ -52,7 +52,13 @@ def get_news(driver: webdriver.Firefox, limit: int = None) -> list[GoogleNewsCov
             print(f"Clicked news title {news_article}")
             driver.switch_to.window(driver.window_handles[-1])
             # wait for the page to load and the redirect chain to finish
-            WebDriverWait(driver, 60).until(lambda d: d.execute_script('return document.readyState') == 'complete' and 'google.com' not in d.current_url)
+            try:
+                WebDriverWait(driver, 60).until(lambda d: d.execute_script('return document.readyState') == 'complete' and 'google.com' not in d.current_url)
+            except:
+                print("Timeout")
+                driver.close()
+                driver.switch_to.window(driver.window_handles[0])
+                continue
 
             news_url = driver.current_url
             if news_url.startswith("https://www.google.com/url?q="):
